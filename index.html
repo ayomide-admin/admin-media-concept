@@ -1,0 +1,128 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Admin Media Concept - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header with Sticky Navbar -->
+    <header>
+        <div class="logo">The Admin Media Concept</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>The Admin Media Concept</h1>
+        <p>...the world of communication</p>
+        <a href="services.html" class="btn">See Our Services</a>
+    </section>
+
+    <!-- Introduction -->
+    <section class="intro">
+        <p>Welcome to The Admin Media Concept, your one-stop solution for all media, design, and tech needs. We are passionate about bringing your ideas to life through innovative and creative solutions.</p>
+    </section>
+
+    <!-- Key Services Highlight -->
+    <section class="services">
+        <h2>Our Key Services</h2>
+        <div class="service-grid">
+            <div class="service-card">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Graphics Design</h3>
+                <p>Creative and eye-catching designs for all your needs.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-code"></i>
+                <h3>Web Coding</h3>
+                <p>Custom-coded websites tailored to your specifications.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-users"></i>
+                <h3>Social Media Management</h3>
+                <p>Engage your audience and grow your online presence.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-choose-us">
+        <h2>Why Choose Us</h2>
+        <div class="reasons">
+            <div class="reason">
+                <h3>Expertise</h3>
+                <p>Years of experience in the industry.</p>
+            </div>
+            <div class="reason">
+                <h3>Innovation</h3>
+                <p>Always staying ahead with the latest trends.</p>
+            </div>
+            <div class="reason">
+                <h3>Customer Satisfaction</h3>
+                <p>Our clients are our top priority.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Contact us: oloweayomide@gmail.com.com | +234 803 554 3302</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </footer>
+</body>
+</html>
